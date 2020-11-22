@@ -4,15 +4,17 @@ export default class MovieBaseService {
   IMG_URL = 'https://image.tmdb.org/t/p/w200';
 
   async getResource(url) {
-    const res = await fetch(`https://api.themoviedb.org/3/${url}`);
+    try {
+      const res = await fetch(`https://api.themoviedb.org/3/${url}`);
 
-    if (!res.ok) {
-      throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
+      if (!res.ok) {
+        throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
+      }
+      const body = await res.json();
+      return body;
+    } catch (error) {
+      throw new Error(error.message);
     }
-
-    const body = await res.json();
-
-    return body;
   }
 
   async getMoviesByKeyWord(keyword = 'return', pageNumber = 1) {

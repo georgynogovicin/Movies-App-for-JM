@@ -1,10 +1,15 @@
 body {
-    background: #E5E5E5;
+  background: #e5e5e5;
 }
 
 .wrapper {
-    width: 1010px;
-    margin: 0 auto;
+  width: 1010px;
+  margin: 0 auto;
 
-    background: #FFFFFF;
+  background: #ffffff;
+}
+
+.spinner {
+  display: block;
+  margin: 100px auto;
 }
