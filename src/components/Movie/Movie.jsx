@@ -13,11 +13,18 @@ function Movie({ poster_path: posterPath, title, overview, release_date: release
     <Card
       hoverable
       className="movie"
-      cover={<img alt="example" className="movie__poster" src={`https://image.tmdb.org/t/p/w200${posterPath}`} />}
+      cover={
+        <img
+          alt="Poster"
+          style={{ width: 183, height: 281 }}
+          className="movie__poster"
+          src={`https://image.tmdb.org/t/p/w200${posterPath}`}
+        />
+      }
     >
       <div className="movie__wrapper">
         <h2 className="movie__title">{cropText(title, 20)}</h2>
-        <p className="movie__release-date">{format(new Date(releaseDate), 'MMMM dd, yyyy')}</p>
+        <p className="movie__release-date">{releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : null}</p>
         <div className="genres">
           <div className="genres__item">Action</div>
           <div className="genres__item">Drama</div>

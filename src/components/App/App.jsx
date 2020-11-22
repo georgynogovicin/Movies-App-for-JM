@@ -22,7 +22,7 @@ export default class App extends Component {
 
   async getMovies() {
     try {
-      const movies = await this.movieService.getMoviesByKeyWord('return');
+      const movies = await this.movieService.getMoviesByKeyWord('avengers');
 
       this.setState({
         movies,
