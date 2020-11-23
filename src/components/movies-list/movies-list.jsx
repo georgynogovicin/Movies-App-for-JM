@@ -1,11 +1,8 @@
 import React from 'react';
-import { Tabs } from 'antd';
 import PropTypes from 'prop-types';
 import Movie from '../Movie';
 
 import './movies.list.scss';
-
-const { TabPane } = Tabs;
 
 const MoviesList = ({ movies }) => {
   const items = movies.map((movie) => {
@@ -13,13 +10,7 @@ const MoviesList = ({ movies }) => {
     return <Movie key={id} {...props} />;
   });
 
-  return (
-    <Tabs centered>
-      <TabPane tab="Search" className="content">
-        {items}
-      </TabPane>
-    </Tabs>
-  );
+  return <section className="movies-list">{items}</section>;
 };
 
 MoviesList.propTypes = {

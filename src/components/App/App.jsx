@@ -1,53 +1,67 @@
-import React, { Component } from 'react';
-import { Spin, Alert } from 'antd';
-import MovieBaseService from '../../services';
-import MoviesList from '../movies-list';
+import React from 'react';
+import { Tabs } from 'antd';
+import MoviesPage from '../movies-page';
 
 import 'antd/dist/antd.css';
 import './app.scss';
 
-export default class App extends Component {
-  movieService = new MovieBaseService();
+const { TabPane } = Tabs;
 
-  state = {
-    error: null,
-    isLoaded: false,
-    movies: [],
-  };
+const App = () => {
+  return (
+    <div className="wrapper">
+      <Tabs centered>
+        <TabPane tab="Search" key="1">
+          <MoviesPage />
+        </TabPane>
+      </Tabs>
+    </div>
+  );
+};
 
-  constructor() {
-    super();
-    this.getMovies();
-  }
+export default App;
 
-  async getMovies() {
-    try {
-      const movies = await this.movieService.getMoviesByKeyWord('avengers');
+// export default class App extends Component {
+//   movieService = new MovieBaseService();
 
-      this.setState({
-        movies,
-        isLoaded: true,
-      });
-    } catch (error) {
-      this.setState({
-        error,
-      });
-    }
-  }
+//   state = {
+//     error: null,
+//     isLoaded: false,
+//     movies: [],
+//   };
 
-  render() {
-    const { error, isLoaded, movies } = this.state;
+//   componentDidMount() {
+//     this.getMovies();
+//   }
 
-    if (error) {
-      return <Alert message="Error" description={error.message} type="error" showIcon />;
-    }
-    if (!isLoaded) {
-      return <Spin className="spinner" size="large" tip="Loading..." />;
-    }
-    return (
-      <div className="wrapper">
-        <MoviesList movies={movies} />
-      </div>
-    );
-  }
-}
+//   async getMovies() {
+//     try {
+//       const movies = await this.movieService.getMoviesByKeyWord();
+
+//       this.setState({
+//         movies,
+//         isLoaded: true,
+//       });
+//     } catch (error) {
+//       this.setState({
+//         error,
+//       });
+//     }
+//   }
+
+//   render() {
+//     const { error, isLoaded, movies } = this.state;
+
+//     const onError = error ? <Alert message="Error" description={error.message} type="error" showIcon /> : null;
+//     const onLoad = !isLoaded ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
+//     const content = isLoaded ? <MoviesList movies={movies} /> : null;
+
+//     return (
+//       <div className="wrapper">
+//         { onError}
+//         { onLoad}
+//         { content}
+//       </div>
+//     );
+//   }
+// }

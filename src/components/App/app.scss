@@ -4,6 +4,7 @@ body {
 
 .wrapper {
   width: 1010px;
+  height: 100%;
   margin: 0 auto;
 
   background: #ffffff;
@@ -11,5 +12,9 @@ body {
 
 .spinner {
   display: block;
-  margin: 100px auto;
+  margin: 0;
+
+  position: absolute;
+  top: 50%;
+  left: 48%;
 }
