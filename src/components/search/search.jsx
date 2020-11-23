@@ -26,7 +26,7 @@ export default class Search extends Component {
 
   updateMoviesList = (value) => {
     const { onChangeKeyWord } = this.props;
-
+    if (value.length < 1) onChangeKeyWord('return');
     if (value.trim()) onChangeKeyWord(value);
   };
 

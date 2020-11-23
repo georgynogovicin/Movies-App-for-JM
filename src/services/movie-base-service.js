@@ -21,6 +21,6 @@ export default class MovieBaseService {
     const res = await this.getResource(
       `search/movie?api_key=fb3986d1ebcf30c4a969c0784a406177&query=${keyword}&page=${pageNumber}`
     );
-    return res.results;
+    return res;
   }
 }
