@@ -1,67 +1,69 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Tabs } from 'antd';
 import MoviesPage from '../movies-page';
+import RatedMoviesPage from '../rated-movies-page';
+import MovieBaseService from '../../services';
 
 import 'antd/dist/antd.css';
 import './app.scss';
 
 const { TabPane } = Tabs;
+const movieService = new MovieBaseService();
 
-const App = () => {
-  return (
-    <div className="wrapper">
-      <Tabs centered>
-        <TabPane tab="Search" key="1">
-          <MoviesPage />
-        </TabPane>
-      </Tabs>
-    </div>
-  );
-};
+export default class App extends Component {
+  state = {
+    guestSessionId: '',
+    isRated: false,
+    tab: 1,
+  };
 
-export default App;
+  componentDidMount() {
+    const { guestSessionId } = this.state;
+    if (!guestSessionId) {
+      this.getGuestSession();
+    }
+  }
 
-// export default class App extends Component {
-//   movieService = new MovieBaseService();
+  onRated = () => {
+    this.setState({
+      isRated: true,
+    });
+  };
 
-//   state = {
-//     error: null,
-//     isLoaded: false,
-//     movies: [],
-//   };
+  async getGuestSession() {
+    try {
+      const { guest_session_id: guestSessionId } = await movieService.getGuestSession();
+      this.setState(() => {
+        return {
+          guestSessionId,
+        };
+      });
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error);
+    }
+  }
 
-//   componentDidMount() {
-//     this.getMovies();
-//   }
+  onChangeTab = (key) => {
+    this.setState({
+      tab: key,
+    });
+  };
 
-//   async getMovies() {
-//     try {
-//       const movies = await this.movieService.getMoviesByKeyWord();
+  render() {
+    const { guestSessionId, isRated, tab } = this.state;
 
-//       this.setState({
-//         movies,
-//         isLoaded: true,
-//       });
-//     } catch (error) {
-//       this.setState({
-//         error,
-//       });
-//     }
-//   }
-
-//   render() {
-//     const { error, isLoaded, movies } = this.state;
-
-//     const onError = error ? <Alert message="Error" description={error.message} type="error" showIcon /> : null;
-//     const onLoad = !isLoaded ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
-//     const content = isLoaded ? <MoviesList movies={movies} /> : null;
-
-//     return (
-//       <div className="wrapper">
-//         { onError}
-//         { onLoad}
-//         { content}
-//       </div>
-//     );
-//   }
-// }
+    return (
+      <div className="wrapper">
+        <Tabs centered onChange={this.onChangeTab}>
+          <TabPane tab="Search" key="1">
+            <MoviesPage guestSessionId={guestSessionId} onRated={this.onRated} />
+          </TabPane>
+          <TabPane tab="Rated" key="2">
+            <RatedMoviesPage guestSessionId={guestSessionId} isRated={isRated} tab={tab} />
+          </TabPane>
+        </Tabs>
+      </div>
+    );
+  }
+}

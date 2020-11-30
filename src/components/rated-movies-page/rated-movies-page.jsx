@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import { Pagination, Spin, Alert } from 'antd';
 import PropTypes from 'prop-types';
-import Search from '../search';
 import MoviesList from '../movies-list';
 import MovieBaseService from '../../services';
 
-import './movies-page.scss';
+import './rated-movies-page.scss';
 
-export default class MoviesPage extends Component {
+export default class RatedMoviesPage extends Component {
   movieService = new MovieBaseService();
 
   static propTypes = {
     guestSessionId: PropTypes.string.isRequired,
-    onRated: PropTypes.func.isRequired,
+    isRated: PropTypes.bool.isRequired,
   };
 
   state = {
@@ -25,17 +24,24 @@ export default class MoviesPage extends Component {
   };
 
   componentDidMount() {
-    this.getMovies();
+    this.getRatedMovies();
   }
 
-  async getMovies(keyWord, currentPage) {
+  // componentDidUpdate() {
+  //     this.getRatedMovies();
+  // }
+
+  async getRatedMovies() {
+    const { guestSessionId, isRated } = this.props;
+
     try {
+      if (!isRated) throw new Error('Try to rate some movies first');
       const {
         results: movies,
         total_pages: totalPages,
         page,
         total_results: totalResults,
-      } = await this.movieService.getMoviesByKeyWord(keyWord, currentPage);
+      } = await this.movieService.getRatedMovies(guestSessionId);
 
       if (totalResults < 1) {
         throw new Error("Sorry, we didn't find anything");
@@ -55,14 +61,6 @@ export default class MoviesPage extends Component {
     }
   }
 
-  onChangeKeyWord = (keyword) => {
-    this.setState({
-      keyWord: keyword,
-      error: null,
-    });
-    this.getMovies(keyword);
-  };
-
   onChangePage = (currentPage) => {
     this.setState({
       page: currentPage,
@@ -81,23 +79,19 @@ export default class MoviesPage extends Component {
     if (error.message === "Sorry, we didn't find anything") {
       return <Alert message="No comprendo!?" description={error.message} type="info" showIcon />;
     }
+    if (error.message === 'Try to rate some movies first') {
+      return <Alert message="You didn't rate any movie yet" description={error.message} type="info" showIcon />;
+    }
     return <Alert message="Error" description={error.message} type="error" showIcon />;
   };
 
-  rateMovie = async (value, id) => {
-    const { guestSessionId, onRated } = this.props;
+  rateMovie = (value, id) => {
+    const { guestSessionId } = this.props;
 
     const data = {
       value,
     };
-    try {
-      await this.movieService.rateMovie(id, guestSessionId, data);
-      onRated();
-    } catch (error) {
-      this.setState({
-        error,
-      });
-    }
+    this.movieService.rateMovie(id, guestSessionId, data);
   };
 
   render() {
@@ -120,7 +114,6 @@ export default class MoviesPage extends Component {
 
     return (
       <>
-        <Search onChangeKeyWord={this.onChangeKeyWord} />
         {onError}
         {onLoad}
         {content}

@@ -3,9 +3,19 @@ export default class MovieBaseService {
 
   IMG_URL = 'https://image.tmdb.org/t/p/w200';
 
-  async getResource(url) {
+  async getResource(...params) {
+    const [url, data] = params;
+
     try {
-      const res = await fetch(`https://api.themoviedb.org/3/${url}`);
+      const res = data
+        ? await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify(data),
+          })
+        : await fetch(url);
 
       if (!res.ok) {
         throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
@@ -19,8 +29,37 @@ export default class MovieBaseService {
 
   async getMoviesByKeyWord(keyword = 'return', pageNumber = 1) {
     const res = await this.getResource(
-      `search/movie?api_key=fb3986d1ebcf30c4a969c0784a406177&query=${keyword}&page=${pageNumber}`
+      `${this.API_URL}search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${keyword}&page=${pageNumber}`
     );
     return res;
+  }
+
+  async getGuestSession() {
+    const res = await this.getResource(
+      `${this.API_URL}authentication/guest_session/new?api_key=${process.env.REACT_APP_API_KEY}`
+    );
+
+    if (!res.success) {
+      throw new Error('Create guest session error');
+    }
+
+    return res;
+  }
+
+  async getRatedMovies(sessionId) {
+    const res = await this.getResource(
+      `${this.API_URL}guest_session/${sessionId}/rated/movies?api_key=${process.env.REACT_APP_API_KEY}`
+    );
+
+    return res;
+  }
+
+  async rateMovie(movieId, guestSessionId, body) {
+    const res = await this.getResource(
+      `${this.API_URL}movie/${movieId}/rating?api_key=${process.env.REACT_APP_API_KEY}&guest_session_id=${guestSessionId}`,
+      body
+    );
+
+    return res.status_message;
   }
 }

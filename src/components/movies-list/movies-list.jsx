@@ -4,10 +4,10 @@ import Movie from '../Movie';
 
 import './movies.list.scss';
 
-const MoviesList = ({ movies }) => {
+const MoviesList = ({ movies, rateMovie }) => {
   const items = movies.map((movie) => {
     const { id, ...props } = movie;
-    return <Movie key={id} {...props} />;
+    return <Movie key={id} id={id} {...props} rateMovie={rateMovie} />;
   });
 
   return <section className="movies-list">{items}</section>;
@@ -15,6 +15,7 @@ const MoviesList = ({ movies }) => {
 
 MoviesList.propTypes = {
   movies: PropTypes.instanceOf(Array).isRequired,
+  rateMovie: PropTypes.func.isRequired,
 };
 
 export default MoviesList;
