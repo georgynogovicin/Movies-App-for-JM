@@ -3,6 +3,7 @@ import { Card, Rate } from 'antd';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import cropText from '../../helpers/crop-text';
+import Genres from '../genres';
 
 import './Movie.scss';
 
@@ -17,6 +18,7 @@ function Movie({
   rateMovie,
   id,
   vote_average: voteAverage,
+  genre_ids: genresIDs,
 }) {
   const movieVote = classNames({
     'movie__vote-average--low': voteAverage <= 3,
@@ -46,10 +48,7 @@ function Movie({
         <h2 className="movie__title">{cropText(title, 20)}</h2>
         <div className={`movie__vote-average ${movieVote}`}>{voteAverage}</div>
         <p className="movie__release-date">{releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : null}</p>
-        <div className="genres">
-          <div className="genres__item">Action</div>
-          <div className="genres__item">Drama</div>
-        </div>
+        <Genres genresIDs={genresIDs} />
         <div className="movie__overview">
           <p>{cropText(overview, 170)}</p>
         </div>
@@ -81,6 +80,7 @@ Movie.propTypes = {
   rateMovie: PropTypes.func.isRequired,
   id: PropTypes.number.isRequired,
   vote_average: PropTypes.number.isRequired,
+  genre_ids: PropTypes.instanceOf(Array).isRequired,
 };
 
 export default Movie;

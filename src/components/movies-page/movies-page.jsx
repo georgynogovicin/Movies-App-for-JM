@@ -13,6 +13,7 @@ export default class MoviesPage extends Component {
   static propTypes = {
     guestSessionId: PropTypes.string.isRequired,
     onRated: PropTypes.func.isRequired,
+    genresIsLoaded: PropTypes.bool.isRequired,
   };
 
   state = {
@@ -102,21 +103,23 @@ export default class MoviesPage extends Component {
 
   render() {
     const { error, isLoaded, movies, page, totalPages } = this.state;
+    const { genresIsLoaded } = this.props;
 
     const onError = error ? this.errorView(error) : null;
     const onLoad = !isLoaded && !error ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
-    const content = isLoaded ? (
-      <>
-        <MoviesList movies={movies} rateMovie={this.rateMovie} />
-        <Pagination
-          className="pagination"
-          size="large"
-          current={page}
-          total={totalPages}
-          onChange={this.onChangePage}
-        />
-      </>
-    ) : null;
+    const content =
+      isLoaded && genresIsLoaded ? (
+        <>
+          <MoviesList movies={movies} rateMovie={this.rateMovie} />
+          <Pagination
+            className="pagination"
+            size="large"
+            current={page}
+            total={totalPages}
+            onChange={this.onChangePage}
+          />
+        </>
+      ) : null;
 
     return (
       <>

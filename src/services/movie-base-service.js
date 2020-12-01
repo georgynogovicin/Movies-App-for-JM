@@ -62,4 +62,12 @@ export default class MovieBaseService {
 
     return res.status_message;
   }
+
+  async getGenres() {
+    const res = await this.getResource(
+      `${this.API_URL}genre/movie/list?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`
+    );
+
+    return res;
+  }
 }

@@ -3,6 +3,7 @@ import { Tabs } from 'antd';
 import MoviesPage from '../movies-page';
 import RatedMoviesPage from '../rated-movies-page';
 import MovieBaseService from '../../services';
+import { GenresProvider } from '../genres-provider';
 
 import 'antd/dist/antd.css';
 import './app.scss';
@@ -15,12 +16,17 @@ export default class App extends Component {
     guestSessionId: '',
     tab: 1,
     rated: false,
+    genres: [],
+    genresIsLoaded: false,
   };
 
-  componentDidMount() {
-    const { guestSessionId } = this.state;
+  async componentDidMount() {
+    const { guestSessionId, genres } = this.state;
     if (!guestSessionId) {
-      this.getGuestSession();
+      await this.getGuestSession();
+    }
+    if (!genres.length) {
+      await this.getGenres();
     }
   }
 
@@ -50,19 +56,39 @@ export default class App extends Component {
     }
   }
 
+  async getGenres() {
+    try {
+      const { genres } = await movieService.getGenres();
+      this.setState({
+        genres,
+        genresIsLoaded: true,
+      });
+    } catch (error) {
+      // eslint-disable-next-line
+      console.log(error);
+    }
+  }
+
   render() {
-    const { guestSessionId, tab, rated } = this.state;
+    const { guestSessionId, tab, rated, genres, genresIsLoaded } = this.state;
 
     return (
       <div className="wrapper">
-        <Tabs centered defaultActiveKey="1" onChange={this.onChangeTab}>
-          <TabPane tab="Search" key="1">
-            <MoviesPage guestSessionId={guestSessionId} onRated={this.onRated} />
-          </TabPane>
-          <TabPane tab="Rated" key="2">
-            <RatedMoviesPage guestSessionId={guestSessionId} tab={tab} rated={rated} />
-          </TabPane>
-        </Tabs>
+        <GenresProvider value={genres}>
+          <Tabs centered defaultActiveKey="1" onChange={this.onChangeTab}>
+            <TabPane tab="Search" key="1">
+              <MoviesPage guestSessionId={guestSessionId} onRated={this.onRated} genresIsLoaded={genresIsLoaded} />
+            </TabPane>
+            <TabPane tab="Rated" key="2">
+              <RatedMoviesPage
+                guestSessionId={guestSessionId}
+                tab={tab}
+                rated={rated}
+                genresIsLoaded={genresIsLoaded}
+              />
+            </TabPane>
+          </Tabs>
+        </GenresProvider>
       </div>
     );
   }
