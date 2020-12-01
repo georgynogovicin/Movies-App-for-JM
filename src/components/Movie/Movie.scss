@@ -18,6 +18,12 @@
   &__wrapper {
     width: 228px;
     max-height: 393px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    position: relative;
+
+    overflow: hidden;
   }
 
   &__title {
@@ -48,7 +54,45 @@
     line-height: 22px;
 
     max-height: 119px;
+    min-height: 119px;
     overflow: hidden;
+  }
+
+  &__vote-average {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 0;
+    left: 198px;
+    
+    border-radius: 100%;
+    border: 2px solid;
+    text-align: center;
+    
+    font-size: 12px;
+    line-height: 22px;
+
+    &--low {
+      border-color: #E90000;
+    }
+
+    &--low-middle {
+      border-color: #E97E00;
+    }
+
+    &--high-middle {
+      border-color: #E9D100;
+    }
+
+    &--high {
+      border-color: #66E900;
+    }
+
+
   }
 }
 

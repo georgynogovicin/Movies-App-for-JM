@@ -21,7 +21,7 @@ export default class MoviesPage extends Component {
     movies: [],
     page: null,
     totalPages: null,
-    keyWord: 'return',
+    keyWord: 'batman',
   };
 
   componentDidMount() {
@@ -92,12 +92,12 @@ export default class MoviesPage extends Component {
     };
     try {
       await this.movieService.rateMovie(id, guestSessionId, data);
-      onRated();
     } catch (error) {
       this.setState({
         error,
       });
     }
+    onRated();
   };
 
   render() {

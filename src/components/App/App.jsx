@@ -13,8 +13,8 @@ const movieService = new MovieBaseService();
 export default class App extends Component {
   state = {
     guestSessionId: '',
-    isRated: false,
     tab: 1,
+    rated: false,
   };
 
   componentDidMount() {
@@ -24,9 +24,15 @@ export default class App extends Component {
     }
   }
 
+  onChangeTab = (key) => {
+    this.setState({
+      tab: Number(key),
+    });
+  };
+
   onRated = () => {
     this.setState({
-      isRated: true,
+      rated: true,
     });
   };
 
@@ -44,23 +50,17 @@ export default class App extends Component {
     }
   }
 
-  onChangeTab = (key) => {
-    this.setState({
-      tab: key,
-    });
-  };
-
   render() {
-    const { guestSessionId, isRated, tab } = this.state;
+    const { guestSessionId, tab, rated } = this.state;
 
     return (
       <div className="wrapper">
-        <Tabs centered onChange={this.onChangeTab}>
+        <Tabs centered defaultActiveKey="1" onChange={this.onChangeTab}>
           <TabPane tab="Search" key="1">
             <MoviesPage guestSessionId={guestSessionId} onRated={this.onRated} />
           </TabPane>
           <TabPane tab="Rated" key="2">
-            <RatedMoviesPage guestSessionId={guestSessionId} isRated={isRated} tab={tab} />
+            <RatedMoviesPage guestSessionId={guestSessionId} tab={tab} rated={rated} />
           </TabPane>
         </Tabs>
       </div>

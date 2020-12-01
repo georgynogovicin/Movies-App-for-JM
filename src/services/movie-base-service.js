@@ -27,7 +27,7 @@ export default class MovieBaseService {
     }
   }
 
-  async getMoviesByKeyWord(keyword = 'return', pageNumber = 1) {
+  async getMoviesByKeyWord(keyword = 'batman', pageNumber = 1) {
     const res = await this.getResource(
       `${this.API_URL}search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${keyword}&page=${pageNumber}`
     );

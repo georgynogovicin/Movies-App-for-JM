@@ -11,7 +11,8 @@ export default class RatedMoviesPage extends Component {
 
   static propTypes = {
     guestSessionId: PropTypes.string.isRequired,
-    isRated: PropTypes.bool.isRequired,
+    tab: PropTypes.number.isRequired,
+    rated: PropTypes.bool.isRequired,
   };
 
   state = {
@@ -27,15 +28,21 @@ export default class RatedMoviesPage extends Component {
     this.getRatedMovies();
   }
 
-  // componentDidUpdate() {
-  //     this.getRatedMovies();
-  // }
+  componentDidUpdate(prevProps) {
+    const { tab } = this.props;
+
+    if (prevProps.tab !== tab) {
+      this.getRatedMovies();
+    }
+  }
 
   async getRatedMovies() {
-    const { guestSessionId, isRated } = this.props;
+    const { guestSessionId, rated } = this.props;
 
     try {
-      if (!isRated) throw new Error('Try to rate some movies first');
+      if (!rated) {
+        throw new Error("You didn't rate any movie yet");
+      }
       const {
         results: movies,
         total_pages: totalPages,
@@ -52,6 +59,7 @@ export default class RatedMoviesPage extends Component {
         totalPages,
         page,
         isLoaded: true,
+        error: null,
       });
     } catch (error) {
       this.setState({
@@ -79,9 +87,10 @@ export default class RatedMoviesPage extends Component {
     if (error.message === "Sorry, we didn't find anything") {
       return <Alert message="No comprendo!?" description={error.message} type="info" showIcon />;
     }
-    if (error.message === 'Try to rate some movies first') {
-      return <Alert message="You didn't rate any movie yet" description={error.message} type="info" showIcon />;
+    if (error.message === "You didn't rate any movie yet") {
+      return <Alert message="Try to rate some movie first" description={error.message} type="info" showIcon />;
     }
+
     return <Alert message="Error" description={error.message} type="error" showIcon />;
   };
 
