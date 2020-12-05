@@ -10,7 +10,7 @@ const MoviesList = ({ movies, rateMovie }) => {
     return <Movie key={id} id={id} {...props} rateMovie={rateMovie} />;
   });
 
-  return <section className="movies-list">{items}</section>;
+  return <div className="movies-list">{items}</div>;
 };
 
 MoviesList.propTypes = {

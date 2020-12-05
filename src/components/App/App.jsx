@@ -4,6 +4,7 @@ import MoviesPage from '../movies-page';
 import RatedMoviesPage from '../rated-movies-page';
 import MovieBaseService from '../../services';
 import { GenresProvider } from '../genres-provider';
+import ErrorView from '../error-view';
 
 import 'antd/dist/antd.css';
 import './app.scss';
@@ -18,6 +19,7 @@ export default class App extends Component {
     rated: false,
     genres: [],
     genresIsLoaded: false,
+    hasError: false,
   };
 
   async componentDidMount() {
@@ -51,8 +53,9 @@ export default class App extends Component {
         };
       });
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error);
+      this.setState({
+        hasError: error,
+      });
     }
   }
 
@@ -64,15 +67,17 @@ export default class App extends Component {
         genresIsLoaded: true,
       });
     } catch (error) {
-      // eslint-disable-next-line
-      console.log(error);
+      this.setState({
+        hasError: error,
+      });
     }
   }
 
   render() {
-    const { guestSessionId, tab, rated, genres, genresIsLoaded } = this.state;
+    const { guestSessionId, tab, rated, genres, genresIsLoaded, hasError } = this.state;
 
-    return (
+    const errorView = hasError ? <ErrorView error={hasError} /> : null;
+    const contentView = !hasError ? (
       <div className="wrapper">
         <GenresProvider value={genres}>
           <Tabs centered defaultActiveKey="1" onChange={this.onChangeTab}>
@@ -89,6 +94,15 @@ export default class App extends Component {
             </TabPane>
           </Tabs>
         </GenresProvider>
+      </div>
+    ) : null;
+
+    return (
+      <div className="app">
+        <div className="app__box">
+          {errorView}
+          {contentView}
+        </div>
       </div>
     );
   }

@@ -9,6 +9,8 @@ import './Movie.scss';
 
 const classNames = require('classnames');
 
+const { Meta } = Card;
+
 function Movie({
   poster_path: posterPath,
   title,
@@ -29,12 +31,11 @@ function Movie({
 
   return (
     <Card
-      hoverable
       className="movie"
+      style={{ width: 454, display: 'flex' }}
       cover={
         <img
-          alt="Poster"
-          style={{ width: 183, height: 281 }}
+          alt={title}
           className="movie__poster"
           src={
             posterPath
@@ -44,22 +45,21 @@ function Movie({
         />
       }
     >
-      <div className="movie__wrapper">
-        <h2 className="movie__title">{cropText(title, 20)}</h2>
-        <div className={`movie__vote-average ${movieVote}`}>{voteAverage}</div>
-        <p className="movie__release-date">{releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : null}</p>
-        <Genres genresIDs={genresIDs} />
-        <div className="movie__overview">
-          <p>{cropText(overview, 170)}</p>
-        </div>
-        <Rate
-          count="10"
-          style={{ fontSize: 15, alignSelf: 'flex-end' }}
-          allowHalf
-          defaultValue={rating}
-          onChange={(value) => rateMovie(value, id)}
-        />
-      </div>
+      <Meta
+        title={cropText(title, 20)}
+        description={releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : null}
+      />
+      <div className={`movie__vote-average ${movieVote}`}>{voteAverage}</div>
+      <Genres genresIDs={genresIDs} />
+      <div className="movie__overview">{cropText(overview, 150)}</div>
+      <Rate
+        count="10"
+        className="movie__rate"
+        style={{ fontSize: 15, alignSelf: 'flex-end' }}
+        allowHalf
+        defaultValue={rating}
+        onChange={(value) => rateMovie(value, id)}
+      />
     </Card>
   );
 }

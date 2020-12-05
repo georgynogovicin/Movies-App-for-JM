@@ -1,8 +1,14 @@
 .movies-list {
-  padding-top: 19px;
-  padding-left: 29px;
+  padding: 30px;
+  padding-top: 0;
 
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: space-around;
+
+  @media (max-width: 768px) {
+    padding-left: 16px;
+  }
 }
+
+
