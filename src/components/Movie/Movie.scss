@@ -11,14 +11,11 @@ $screen-xl: 1440px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
   text-align: left;
 
-  
   @media screen and (max-width: $md) {
     min-width: 387px !important;
     width: 387px !important;
     margin-bottom: 20px !important;
   }
-
-
 
   &__poster {
     height: 281px;
@@ -47,8 +44,7 @@ $screen-xl: 1440px;
     }
   }
 
-  &__rate{
-        
+  &__rate {
     @media screen and (max-width: $md) {
       position: relative !important;
       float: right !important;
@@ -66,40 +62,36 @@ $screen-xl: 1440px;
     font-size: 12px;
     align-items: center;
     justify-content: center;
-    border: 2px solid ;
+    border: 2px solid;
     @media screen and (max-width: $md) {
       top: 10px;
       right: 5px;
     }
-    
-        &--low {
-          border-color: #e90000;
-        }
-    
-        &--low-middle {
-          border-color: #e97e00;
-        }
-    
-        &--high-middle {
-          border-color: #e9d100;
-        }
-    
-        &--high {
-          border-color: #66e900;
-        }
-      }
+
+    &--low {
+      border-color: #e90000;
+    }
+
+    &--low-middle {
+      border-color: #e97e00;
+    }
+
+    &--high-middle {
+      border-color: #e9d100;
+    }
+
+    &--high {
+      border-color: #66e900;
+    }
+  }
 }
 
-.ant-card-body{
+.ant-card-body {
   @media screen and (max-width: $md) {
     padding: 13px !important;
     width: 320px;
   }
 }
-
-
-
-
 
 // $small: 320px;
 // $sm: 350px;
@@ -123,13 +115,11 @@ $screen-xl: 1440px;
 //     min-width: 387px !important;
 //     width: 387px !important;
 //   }
-  
-  
 
 //   &__poster {
 //     width: 183px;
 //     height: 281px;
-    
+
 //     @media screen and (max-width: $sm) {
 //       width: 60px;
 //       height: 91px;
@@ -150,7 +140,7 @@ $screen-xl: 1440px;
 //       width: 180px;
 //       max-height: 250px;
 //     }
-    
+
 //   }
 
 //   &__title {
