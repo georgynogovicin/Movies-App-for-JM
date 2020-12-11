@@ -2,12 +2,13 @@ import React from 'react';
 import { Card, Rate } from 'antd';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
+import ClassNames from 'classnames';
 import cropText from '../../helpers/crop-text';
 import Genres from '../genres';
 
+// eslint-disable-next-line import/no-unresolved
 import './Movie.scss';
-
-const classNames = require('classnames');
+import noPoster from '../../img/box-mockup_1017-8601.jpg';
 
 const { Meta } = Card;
 
@@ -22,11 +23,11 @@ function Movie({
   vote_average: voteAverage,
   genre_ids: genresIDs,
 }) {
-  const movieVote = classNames({
-    'movie__vote-average--low': voteAverage <= 3,
-    'movie__vote-average--low-middle': voteAverage > 3 && voteAverage <= 5,
-    'movie__vote-average--high-middle': voteAverage > 5 && voteAverage <= 7,
-    'movie__vote-average--high': voteAverage > 7,
+  const movieVote = ClassNames({
+    'movie__vote-average movie__vote-average--low': voteAverage <= 3,
+    'movie__vote-average movie__vote-average--low-middle': voteAverage > 3 && voteAverage <= 5,
+    'movie__vote-average movie__vote-average--high-middle': voteAverage > 5 && voteAverage <= 7,
+    'movie__vote-average movie__vote-average--high': voteAverage > 7,
   });
 
   return (
@@ -37,11 +38,7 @@ function Movie({
         <img
           alt={title}
           className="movie__poster"
-          src={
-            posterPath
-              ? `https://image.tmdb.org/t/p/w200${posterPath}`
-              : `https://image.freepik.com/free-vector/box-mockup_1017-8601.jpg`
-          }
+          src={posterPath ? `https://image.tmdb.org/t/p/w200${posterPath}` : noPoster}
         />
       }
     >
@@ -49,7 +46,7 @@ function Movie({
         title={cropText(title, 20)}
         description={releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : null}
       />
-      <div className={`movie__vote-average ${movieVote}`}>{voteAverage}</div>
+      <div className={movieVote}>{voteAverage}</div>
       <Genres genresIDs={genresIDs} />
       <div className="movie__overview">{cropText(overview, 150)}</div>
       <Rate
@@ -65,7 +62,7 @@ function Movie({
 }
 
 Movie.defaultProps = {
-  poster_path: 'https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png',
+  poster_path: noPoster,
   title: 'Movie',
   overview: 'About film',
   rating: 0,

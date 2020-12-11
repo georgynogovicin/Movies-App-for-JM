@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { Tabs } from 'antd';
 import MoviesPage from '../movies-page';
 import RatedMoviesPage from '../rated-movies-page';
-import MovieBaseService from '../../services';
+import movieService from '../../services';
 import { GenresProvider } from '../genres-provider';
 import ErrorView from '../error-view';
 
 import 'antd/dist/antd.css';
-import './app.scss';
+// eslint-disable-next-line import/no-unresolved
+import './App.scss';
 
 const { TabPane } = Tabs;
-const movieService = new MovieBaseService();
 
 export default class App extends Component {
   state = {

@@ -1,29 +1,40 @@
-export default class MovieBaseService {
+class MovieBaseService {
   API_URL = 'https://api.themoviedb.org/3/';
 
   IMG_URL = 'https://image.tmdb.org/t/p/w200';
 
-  async getResource(...params) {
-    const [url, data] = params;
-
-    try {
-      const res = data
-        ? await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json;charset=utf-8',
-            },
-            body: JSON.stringify(data),
-          })
-        : await fetch(url);
-
-      if (!res.ok) {
-        throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
+  async getResource(url, method = 'GET', data = {}) {
+    if (method === 'GET') {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
+        }
+        const body = await res.json();
+        return body;
+      } catch (error) {
+        throw new Error(error.name);
       }
-      const body = await res.json();
-      return body;
-    } catch (error) {
-      throw new Error(error.message);
+    }
+    if (method === 'POST') {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+          },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+          throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
+        }
+        const body = await res.json();
+        return body;
+      } catch (error) {
+        throw new Error(error.name);
+      }
+    } else {
+      return false;
     }
   }
 
@@ -46,9 +57,9 @@ export default class MovieBaseService {
     return res;
   }
 
-  async getRatedMovies(sessionId) {
+  async getRatedMovies(sessionId, pageNumber = 1) {
     const res = await this.getResource(
-      `${this.API_URL}guest_session/${sessionId}/rated/movies?api_key=${process.env.REACT_APP_API_KEY}`
+      `${this.API_URL}guest_session/${sessionId}/rated/movies?api_key=${process.env.REACT_APP_API_KEY}&page=${pageNumber}`
     );
 
     return res;
@@ -57,6 +68,7 @@ export default class MovieBaseService {
   async rateMovie(movieId, guestSessionId, body) {
     const res = await this.getResource(
       `${this.API_URL}movie/${movieId}/rating?api_key=${process.env.REACT_APP_API_KEY}&guest_session_id=${guestSessionId}`,
+      'POST',
       body
     );
 
@@ -71,3 +83,7 @@ export default class MovieBaseService {
     return res;
   }
 }
+
+const movieService = new MovieBaseService();
+
+export default movieService;

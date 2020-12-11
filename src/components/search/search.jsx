@@ -13,21 +13,17 @@ export default class Search extends Component {
     inputValue: '',
   };
 
-  componentDidMount() {
-    this.updateMoviesLIst = debounce(this.updateMoviesList, 2000);
-  }
+  updateMoviesList = debounce((value) => {
+    const { onChangeKeyWord } = this.props;
+    if (value.length < 1) onChangeKeyWord('return');
+    if (value.trim()) onChangeKeyWord(value);
+  }, 2000);
 
   onChange = (event) => {
     this.setState({
       inputValue: event.target.value,
     });
-    this.updateMoviesLIst(event.target.value);
-  };
-
-  updateMoviesList = (value) => {
-    const { onChangeKeyWord } = this.props;
-    if (value.length < 1) onChangeKeyWord('return');
-    if (value.trim()) onChangeKeyWord(value);
+    this.updateMoviesList(event.target.value);
   };
 
   render() {

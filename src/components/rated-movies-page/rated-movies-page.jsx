@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Pagination, Spin, Alert } from 'antd';
+import { Pagination, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import MoviesList from '../movies-list';
-import MovieBaseService from '../../services';
+import movieService from '../../services';
+import ErrorView from '../error-view';
 
 import './rated-movies-page.scss';
 
 export default class RatedMoviesPage extends Component {
-  movieService = new MovieBaseService();
-
   static propTypes = {
     guestSessionId: PropTypes.string.isRequired,
     tab: PropTypes.number.isRequired,
@@ -22,7 +21,7 @@ export default class RatedMoviesPage extends Component {
     movies: [],
     page: null,
     totalPages: null,
-    keyWord: 'return',
+    // keyWord: 'return',
   };
 
   componentDidMount() {
@@ -39,6 +38,7 @@ export default class RatedMoviesPage extends Component {
 
   async getRatedMovies() {
     const { guestSessionId, rated } = this.props;
+    const { currentPage } = this.state;
 
     try {
       if (!rated) {
@@ -49,7 +49,7 @@ export default class RatedMoviesPage extends Component {
         total_pages: totalPages,
         page,
         total_results: totalResults,
-      } = await this.movieService.getRatedMovies(guestSessionId);
+      } = await movieService.getRatedMovies(guestSessionId, currentPage);
 
       if (totalResults < 1) {
         throw new Error("Sorry, we didn't find anything");
@@ -75,40 +75,33 @@ export default class RatedMoviesPage extends Component {
       page: currentPage,
     });
 
-    const { keyWord } = this.state;
-
-    this.getMovies(keyWord, currentPage);
+    this.getRatedMovies();
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
   };
 
-  errorView = (error) => {
-    if (error.message === "Sorry, we didn't find anything") {
-      return <Alert message="No comprendo!?" description={error.message} type="info" showIcon />;
-    }
-    if (error.message === "You didn't rate any movie yet") {
-      return <Alert message="Try to rate some movie first" description={error.message} type="info" showIcon />;
-    }
-
-    return <Alert message="Error" description={error.message} type="error" showIcon />;
-  };
-
-  rateMovie = (value, id) => {
+  rateMovie = async (value, id) => {
     const { guestSessionId } = this.props;
 
     const data = {
       value,
     };
-    this.movieService.rateMovie(id, guestSessionId, data);
+    try {
+      await movieService.rateMovie(id, guestSessionId, data);
+    } catch (error) {
+      this.setState({
+        error,
+      });
+    }
   };
 
   render() {
     const { error, isLoaded, movies, page, totalPages } = this.state;
     const { genresIsLoaded } = this.props;
 
-    const onError = error ? this.errorView(error) : null;
+    const onError = error ? <ErrorView error={error.message} /> : null;
     const onLoad = !isLoaded && !error ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
     const content =
       isLoaded && genresIsLoaded ? (
@@ -119,6 +112,7 @@ export default class RatedMoviesPage extends Component {
             size="large"
             current={page}
             total={totalPages}
+            defaultCurrent={1}
             onChange={this.onChangePage}
           />
         </>

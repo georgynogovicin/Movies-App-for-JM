@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Pagination, Spin, Alert } from 'antd';
+import { Pagination, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import Search from '../search';
 import MoviesList from '../movies-list';
-import MovieBaseService from '../../services';
+import movieService from '../../services';
+import ErrorView from '../error-view';
 
 import './movies-page.scss';
 
 export default class MoviesPage extends Component {
-  movieService = new MovieBaseService();
-
   static propTypes = {
     guestSessionId: PropTypes.string.isRequired,
     onRated: PropTypes.func.isRequired,
@@ -36,7 +35,7 @@ export default class MoviesPage extends Component {
         total_pages: totalPages,
         page,
         total_results: totalResults,
-      } = await this.movieService.getMoviesByKeyWord(keyWord, currentPage);
+      } = await movieService.getMoviesByKeyWord(keyWord, currentPage);
 
       if (totalResults < 1) {
         throw new Error("Sorry, we didn't find anything");
@@ -78,13 +77,6 @@ export default class MoviesPage extends Component {
     });
   };
 
-  errorView = (error) => {
-    if (error.message === "Sorry, we didn't find anything") {
-      return <Alert message="No comprendo!?" description={error.message} type="info" showIcon />;
-    }
-    return <Alert message="Error" description={error.message} type="error" showIcon />;
-  };
-
   rateMovie = async (value, id) => {
     const { guestSessionId, onRated } = this.props;
 
@@ -92,7 +84,7 @@ export default class MoviesPage extends Component {
       value,
     };
     try {
-      await this.movieService.rateMovie(id, guestSessionId, data);
+      await movieService.rateMovie(id, guestSessionId, data);
     } catch (error) {
       this.setState({
         error,
@@ -105,7 +97,7 @@ export default class MoviesPage extends Component {
     const { error, isLoaded, movies, page, totalPages } = this.state;
     const { genresIsLoaded } = this.props;
 
-    const onError = error ? this.errorView(error) : null;
+    const onError = error ? <ErrorView error={error.message} /> : null;
     const onLoad = !isLoaded && !error ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
     const content =
       isLoaded && genresIsLoaded ? (
@@ -114,7 +106,7 @@ export default class MoviesPage extends Component {
           <Pagination
             className="pagination"
             size="large"
-            current={page}
+            defaultCurrent={page}
             total={totalPages}
             onChange={this.onChangePage}
           />

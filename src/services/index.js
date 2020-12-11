@@ -1,3 +1,3 @@
-import MovieBaseService from './movie-base-service';
+import movieService from './movie-base-service';
 
-export default MovieBaseService;
+export default movieService;
