@@ -1,42 +1,29 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 
 import './search.scss';
 
-export default class Search extends Component {
-  static propTypes = {
-    onChangeKeyWord: PropTypes.func.isRequired,
-  };
+const Search = ({ onChangeKeyWord }) => {
+  const [inputValue, setInputValue] = useState('');
 
-  state = {
-    inputValue: '',
-  };
+  const [debouncedOnChangeKeyWord] = useState(() => debounce(onChangeKeyWord, 2000));
 
-  updateMoviesList = debounce((value) => {
-    const { onChangeKeyWord } = this.props;
+  function updateMoviesList(value) {
     if (value.length < 1) onChangeKeyWord('return');
-    if (value.trim()) onChangeKeyWord(value);
-  }, 2000);
-
-  onChange = (event) => {
-    this.setState({
-      inputValue: event.target.value,
-    });
-    this.updateMoviesList(event.target.value);
-  };
-
-  render() {
-    const { inputValue } = this.state;
-
-    return (
-      <input
-        type="text"
-        className="search"
-        placeholder="Search movies..."
-        onChange={this.onChange}
-        value={inputValue}
-      />
-    );
+    if (value.trim()) debouncedOnChangeKeyWord(value);
   }
-}
+
+  function onChange(event) {
+    setInputValue(event.target.value);
+    updateMoviesList(event.target.value);
+  }
+
+  return <input type="text" className="search" placeholder="Search movies..." onChange={onChange} value={inputValue} />;
+};
+
+Search.propTypes = {
+  onChangeKeyWord: PropTypes.func.isRequired,
+};
+
+export default Search;

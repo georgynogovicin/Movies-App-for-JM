@@ -1,5 +1,5 @@
 import React from 'react';
 
-const { Provider: GenresProvider, Consumer: GenresConsumer } = React.createContext();
+const GenresProfiler = React.createContext();
 
-export { GenresConsumer, GenresProvider };
+export default GenresProfiler;

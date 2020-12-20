@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pagination, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import Search from '../search';
@@ -8,118 +8,91 @@ import ErrorView from '../error-view';
 
 import './movies-page.scss';
 
-export default class MoviesPage extends Component {
-  static propTypes = {
-    guestSessionId: PropTypes.string.isRequired,
-    onRated: PropTypes.func.isRequired,
-    genresIsLoaded: PropTypes.bool.isRequired,
-  };
+const MoviesPage = ({ guestSessionId, onRated }) => {
+  const [hasError, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [movies, setMovies] = useState([]);
+  const [currentPage, setPage] = useState(null);
+  const [totalPages, setTotalPages] = useState(null);
+  const [keyword, setKeyWord] = useState('batman');
 
-  state = {
-    error: null,
-    isLoaded: false,
-    movies: [],
-    page: null,
-    totalPages: null,
-    keyWord: 'batman',
-  };
+  useEffect(() => {
+    const getMovies = async (keyWord, pageValue) => {
+      try {
+        const {
+          results: moviesList,
+          total_pages: totalPagesCount,
+          page,
+          total_results: totalResults,
+        } = await movieService.getMoviesByKeyWord(keyWord, pageValue);
 
-  componentDidMount() {
-    this.getMovies();
-  }
+        if (totalResults < 1) {
+          throw new Error("Sorry, we didn't find anything");
+        }
 
-  async getMovies(keyWord, currentPage) {
-    try {
-      const {
-        results: movies,
-        total_pages: totalPages,
-        page,
-        total_results: totalResults,
-      } = await movieService.getMoviesByKeyWord(keyWord, currentPage);
-
-      if (totalResults < 1) {
-        throw new Error("Sorry, we didn't find anything");
+        setMovies(moviesList);
+        setTotalPages(totalPagesCount);
+        setPage(page);
+        setIsLoaded(true);
+      } catch (error) {
+        setError(error);
       }
+    };
+    getMovies(keyword, currentPage);
+  }, [keyword, currentPage]);
 
-      this.setState({
-        movies,
-        totalPages,
-        page,
-        isLoaded: true,
-      });
-    } catch (error) {
-      this.setState({
-        error,
-        isLoaded: false,
-      });
-    }
-  }
-
-  onChangeKeyWord = (keyword) => {
-    this.setState({
-      keyWord: keyword,
-      error: null,
-    });
-    this.getMovies(keyword);
+  const onChangeKeyWord = (keyWord) => {
+    setKeyWord(keyWord);
   };
 
-  onChangePage = (currentPage) => {
-    this.setState({
-      page: currentPage,
-    });
-
-    const { keyWord } = this.state;
-
-    this.getMovies(keyWord, currentPage);
+  const onChangePage = (page) => {
+    setPage(page);
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
   };
 
-  rateMovie = async (value, id) => {
-    const { guestSessionId, onRated } = this.props;
-
+  const rateMovie = async (value, id) => {
     const data = {
       value,
     };
     try {
       await movieService.rateMovie(id, guestSessionId, data);
     } catch (error) {
-      this.setState({
-        error,
-      });
+      setError(error);
     }
     onRated();
   };
 
-  render() {
-    const { error, isLoaded, movies, page, totalPages } = this.state;
-    const { genresIsLoaded } = this.props;
+  const onError = hasError ? <ErrorView error={hasError.message} /> : null;
+  const onLoad = !isLoaded && !hasError ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
+  const content = isLoaded ? (
+    <>
+      <MoviesList movies={movies} rateMovie={rateMovie} />
+      <Pagination
+        className="pagination"
+        size="large"
+        defaultCurrent={currentPage}
+        total={totalPages}
+        onChange={onChangePage}
+      />
+    </>
+  ) : null;
 
-    const onError = error ? <ErrorView error={error.message} /> : null;
-    const onLoad = !isLoaded && !error ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
-    const content =
-      isLoaded && genresIsLoaded ? (
-        <>
-          <MoviesList movies={movies} rateMovie={this.rateMovie} />
-          <Pagination
-            className="pagination"
-            size="large"
-            defaultCurrent={page}
-            total={totalPages}
-            onChange={this.onChangePage}
-          />
-        </>
-      ) : null;
+  return (
+    <>
+      <Search onChangeKeyWord={onChangeKeyWord} />
+      {onError}
+      {onLoad}
+      {content}
+    </>
+  );
+};
 
-    return (
-      <>
-        <Search onChangeKeyWord={this.onChangeKeyWord} />
-        {onError}
-        {onLoad}
-        {content}
-      </>
-    );
-  }
-}
+MoviesPage.propTypes = {
+  guestSessionId: PropTypes.string.isRequired,
+  onRated: PropTypes.func.isRequired,
+};
+
+export default MoviesPage;

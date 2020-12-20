@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Card, Rate } from 'antd';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import ClassNames from 'classnames';
 import cropText from '../../helpers/crop-text';
-import Genres from '../genres';
+import GenresProfiler from '../genres-provider';
 
 // eslint-disable-next-line import/no-unresolved
 import './Movie.scss';
@@ -12,7 +12,7 @@ import noPoster from '../../img/box-mockup_1017-8601.jpg';
 
 const { Meta } = Card;
 
-function Movie({
+const Movie = ({
   poster_path: posterPath,
   title,
   overview,
@@ -22,13 +22,32 @@ function Movie({
   id,
   vote_average: voteAverage,
   genre_ids: genresIDs,
-}) {
+}) => {
   const movieVote = ClassNames({
     'movie__vote-average movie__vote-average--low': voteAverage <= 3,
     'movie__vote-average movie__vote-average--low-middle': voteAverage > 3 && voteAverage <= 5,
     'movie__vote-average movie__vote-average--high-middle': voteAverage > 5 && voteAverage <= 7,
     'movie__vote-average movie__vote-average--high': voteAverage > 7,
   });
+
+  const genresList = useContext(GenresProfiler);
+
+  const genres = genresList.filter((item) => genresIDs.includes(item.id));
+
+  const [first, second, third] = genres.map((item) => {
+    return (
+      <div key={item.id} className="genres__item">
+        {item.name}
+      </div>
+    );
+  });
+  const genresView = (
+    <div className="genres">
+      {first}
+      {second}
+      {third}
+    </div>
+  );
 
   return (
     <Card
@@ -47,7 +66,7 @@ function Movie({
         description={releaseDate ? format(new Date(releaseDate), 'MMMM dd, yyyy') : null}
       />
       <div className={movieVote}>{voteAverage}</div>
-      <Genres genresIDs={genresIDs} />
+      {genresView}
       <div className="movie__overview">{cropText(overview, 150)}</div>
       <Rate
         count="10"
@@ -59,7 +78,7 @@ function Movie({
       />
     </Card>
   );
-}
+};
 
 Movie.defaultProps = {
   poster_path: noPoster,

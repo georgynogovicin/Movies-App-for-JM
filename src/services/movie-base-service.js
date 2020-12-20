@@ -3,38 +3,24 @@ class MovieBaseService {
 
   IMG_URL = 'https://image.tmdb.org/t/p/w200';
 
-  async getResource(url, method = 'GET', data = {}) {
-    if (method === 'GET') {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) {
-          throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
-        }
-        const body = await res.json();
-        return body;
-      } catch (error) {
-        throw new Error(error.name);
+  async getResource(url, method = 'GET', data) {
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
       }
-    }
-    if (method === 'POST') {
-      try {
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-          },
-          body: JSON.stringify(data),
-        });
-        if (!res.ok) {
-          throw new Error(`Could not Fetch ${url}. Recieved ${res.satus}`);
-        }
-        const body = await res.json();
-        return body;
-      } catch (error) {
-        throw new Error(error.name);
-      }
-    } else {
-      return false;
+
+      const body = await res.json();
+      return body;
+    } catch (error) {
+      throw new Error(error.name);
     }
   }
 

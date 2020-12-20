@@ -1,3 +1,3 @@
-import { GenresConsumer, GenresProvider } from './genres-provider';
+import GenresProfiler from './genres-provider';
 
-export { GenresProvider, GenresConsumer };
+export default GenresProfiler;
