@@ -38,7 +38,15 @@ const App = () => {
     setTab(Number(key));
   };
 
-  const onRated = () => {
+  const rateMovie = async (value, id) => {
+    const data = {
+      value,
+    };
+    try {
+      await movieService.rateMovie(id, guestSessionId, data);
+    } catch (error) {
+      setHasError(error);
+    }
     setRated(true);
   };
 
@@ -48,10 +56,10 @@ const App = () => {
       <Provider value={genresList}>
         <Tabs centered defaultActiveKey="1" onChange={onChangeTab}>
           <TabPane tab="Search" key="1">
-            <MoviesPage guestSessionId={guestSessionId} onRated={onRated} />
+            <MoviesPage guestSessionId={guestSessionId} rateMovie={rateMovie} />
           </TabPane>
           <TabPane tab="Rated" key="2">
-            <RatedMoviesPage guestSessionId={guestSessionId} tab={tab} rated={rated} />
+            <RatedMoviesPage guestSessionId={guestSessionId} tab={tab} rated={rated} rateMovie={rateMovie} />
           </TabPane>
         </Tabs>
       </Provider>

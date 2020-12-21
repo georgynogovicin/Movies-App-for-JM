@@ -7,7 +7,7 @@ import ErrorView from '../error-view';
 
 import './rated-movies-page.scss';
 
-const RatedMoviesPage = ({ guestSessionId, rated, tab }) => {
+const RatedMoviesPage = ({ guestSessionId, rated, tab, rateMovie }) => {
   const [error, setError] = useState(null);
   const [isLoaded, setLoaded] = useState(false);
   const [movies, setMovies] = useState([]);
@@ -51,17 +51,6 @@ const RatedMoviesPage = ({ guestSessionId, rated, tab }) => {
     });
   }
 
-  async function rateMovie(value, id) {
-    const data = {
-      value,
-    };
-    try {
-      await movieService.rateMovie(id, guestSessionId, data);
-    } catch (newError) {
-      setError(newError);
-    }
-  }
-
   const onError = error ? <ErrorView error={error.message} /> : null;
   const onLoad = !isLoaded && !error ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
   const content = isLoaded ? (
@@ -91,6 +80,7 @@ RatedMoviesPage.propTypes = {
   guestSessionId: PropTypes.string.isRequired,
   tab: PropTypes.number.isRequired,
   rated: PropTypes.bool.isRequired,
+  rateMovie: PropTypes.func.isRequired,
 };
 
 export default RatedMoviesPage;

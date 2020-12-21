@@ -8,7 +8,7 @@ import ErrorView from '../error-view';
 
 import './movies-page.scss';
 
-const MoviesPage = ({ guestSessionId, onRated }) => {
+const MoviesPage = ({ rateMovie }) => {
   const [hasError, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [movies, setMovies] = useState([]);
@@ -53,18 +53,6 @@ const MoviesPage = ({ guestSessionId, onRated }) => {
     });
   };
 
-  const rateMovie = async (value, id) => {
-    const data = {
-      value,
-    };
-    try {
-      await movieService.rateMovie(id, guestSessionId, data);
-    } catch (error) {
-      setError(error);
-    }
-    onRated();
-  };
-
   const onError = hasError ? <ErrorView error={hasError.message} /> : null;
   const onLoad = !isLoaded && !hasError ? <Spin className="spinner" size="large" tip="Loading..." /> : null;
   const content = isLoaded ? (
@@ -91,8 +79,7 @@ const MoviesPage = ({ guestSessionId, onRated }) => {
 };
 
 MoviesPage.propTypes = {
-  guestSessionId: PropTypes.string.isRequired,
-  onRated: PropTypes.func.isRequired,
+  rateMovie: PropTypes.func.isRequired,
 };
 
 export default MoviesPage;
